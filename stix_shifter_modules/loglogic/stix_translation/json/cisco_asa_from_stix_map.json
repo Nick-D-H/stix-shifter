@@ -1,0 +1,41 @@
+{
+  "ipv4-addr": {
+    "fields": {
+      "value": ["ll_sourceIP", "ll_targetIP"]
+    }
+  },
+  "ipv6-addr": {
+    "fields": {
+      "value": ["ll_sourceIP", "ll_targetIP"]
+    }
+  },
+  "url": {
+    "fields": {
+      "value": ["ll_url"]
+    }
+  },
+  "file": {
+    "fields": {
+      "hashes.SHA-256": ["sys_body"],
+      "hashes.MD5": ["sys_body"],
+      "hashes.SHA-1": ["sys_body"]
+    }
+  },
+  "network-traffic": {
+    "fields": {
+      "src_port": ["ll_sourcePort"],
+      "dst_port": ["ll_targetPort"],
+      "start": ["ll_eventStartTime"],
+      "protocols[*]": ["ll_protocolName"],
+      "src_ref.value": ["ll_sourceIP", "ll_sourceIP"],
+      "dst_ref.value": ["ll_targetIP", "ll_targetIP"],
+      "src_byte_count": ["ll_bytesSent"],
+      "dst_byte_count": ["ll_bytesReceived"]
+    }
+  },
+  "user-account": {
+    "fields": {
+      "user_id": ["ll_targetUser"]
+    }
+  }
+}

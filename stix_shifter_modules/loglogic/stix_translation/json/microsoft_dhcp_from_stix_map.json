@@ -1,0 +1,33 @@
+{
+  "ipv4-addr": {
+    "fields": {
+      "value": ["ll_sourceIP"]
+    }
+  },
+  "ipv6-addr": {
+    "fields": {
+      "value": ["ll_sourceIP"]
+    }
+  },
+  "url": {
+    "fields": {
+      "value": ["ll_url"]
+    }
+  },
+  "mac": {
+    "value": ["ll_sourceMac"]
+  },
+  "file": {
+    "fields": {
+      "hashes.SHA-256": ["sys_body"],
+      "hashes.MD5": ["sys_body"],
+      "hashes.SHA-1": ["sys_body"]
+    }
+  },
+  "network-traffic": {
+    "fields": {
+      "start": ["ll_eventStartTime"],
+      "src_ref.value": ["ll_sourceIP", "ll_sourceIP"]
+    }
+  }
+}
