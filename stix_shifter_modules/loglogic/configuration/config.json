@@ -1,19 +1,21 @@
 {
     "connection": {
         "type": {
-            "default": "async_dummy",
-            "displayName": "Async Sample"
+            "default": "LogLogic",
+            "displayName": "TIBCO LogLogic®"
         },
         "host": {
-            "type": "text"
+            "type": "text",
+            "regex": "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$"
         },
         "port": {
-            "default": 443,
+            "default": 9681,
             "type": "number"
         },
         "help": {
             "default": "<Help URL>",
-            "type": "link"
+            "type": "link",
+            "hidden": true
         },
         "cert": {
             "type": "password",
