@@ -48,12 +48,42 @@ class EntryPoint(BaseEntryPoint):
             filepath = os.path.abspath(
                 os.path.join(basepath, "stix_translation"))
 
-            dialect = 'dialect1'
+            dialect = 'cisco_asa'
             query_translator = QueryTranslator(options, dialect, filepath)
             results_translator = ResultsTranslator(options, dialect)
             self.add_dialect(dialect, query_translator=query_translator, results_translator=results_translator, default=True)
 
-            dialect = 'dialect2'
+            dialect = 'checkpoint'
             query_translator = QueryTranslator(options, dialect, filepath)
             results_translator = ResultsTranslator(options, dialect)
             self.add_dialect(dialect, query_translator=query_translator, results_translator=results_translator, default=False)
+
+            dialect = 'blue_coat_syslog'
+            query_translator = QueryTranslator(options, dialect, filepath)
+            results_translator = ResultsTranslator(options, dialect)
+            self.add_dialect(dialect, query_translator=query_translator, results_translator=results_translator,
+                             default=False)
+
+            dialect = 'microsoft_dhcp'
+            query_translator = QueryTranslator(options, dialect, filepath)
+            results_translator = ResultsTranslator(options, dialect)
+            self.add_dialect(dialect, query_translator=query_translator, results_translator=results_translator,
+                             default=False)
+
+            dialect = 'microsoft_windows'
+            query_translator = QueryTranslator(options, dialect, filepath)
+            results_translator = ResultsTranslator(options, dialect)
+            self.add_dialect(dialect, query_translator=query_translator, results_translator=results_translator,
+                             default=False)
+
+            dialect = 'other_unix'
+            query_translator = QueryTranslator(options, dialect, filepath)
+            results_translator = ResultsTranslator(options, dialect)
+            self.add_dialect(dialect, query_translator=query_translator, results_translator=results_translator,
+                             default=False)
+
+            dialect = 'squid'
+            query_translator = QueryTranslator(options, dialect, filepath)
+            results_translator = ResultsTranslator(options, dialect)
+            self.add_dialect(dialect, query_translator=query_translator, results_translator=results_translator,
+                             default=False)
