@@ -5,6 +5,7 @@ from stix_shifter_utils.stix_translation.src.utils.transformers import Timestamp
 from stix_shifter_utils.stix_translation.src.json_to_stix import observable
 import logging
 import re
+import os
 
 # Source and destination reference mapping for ip and mac addresses.
 # Change the keys to match the data source fields. The value array indicates the possible data type that can come into from field.
@@ -219,6 +220,21 @@ class QueryStringPatternTranslator:
         return self._parse_expression(pattern)
 
 
+def _create_eql_query(query):
+    eql_query = "USE "
+    # Add all the available data models to the query
+    with os.scandir("json") as data_models:
+        for model in data_models:
+            if "from" in model.name:
+                eql_query += "%s, ".format(re.sub("_from.*", "", model.name))
+    # Remove the last ',' and whitespace
+    re.sub(", \B", " ", eql_query)
+    # Add the remainder of the query
+    eql_query += "| %s".format(query)
+
+    return eql_query
+
+
 def translate_pattern(pattern: Pattern, data_model_mapping, options):
     # Query result limit and time range can be passed into the QueryStringPatternTranslator if supported by the data source.
     result_limit = options['result_limit']
@@ -234,9 +250,11 @@ def translate_pattern(pattern: Pattern, data_model_mapping, options):
     # - "sys_eventTime between '2016-02-02' and '2016-02-03'"
     # - "sys_eventTime in -{number}[s, m, h, d, w, M, q, y]
     # 3. Add a limit at the very end to limit the number of results "LIMIT result_limit"
+    loglogic_eql_query = _create_eql_query(query)
+    loglogic_eql_query += " | sys_eventTime in -%dd | LIMIT %d".format(time_range, result_limit)
 
     # This sample return statement is in an SQL format. This should be changed to the native data source query language.
     # If supported by the query language, a limit on the number of results should be added to the query as defined by options['result_limit'].
     # Translated patterns must be returned as a list of one or more native query strings.
     # A list is returned because some query languages require the STIX pattern to be split into multiple query strings.
-    return ["SELECT * FROM tableName WHERE %s" % query]
+    return [loglogic_eql_query]
