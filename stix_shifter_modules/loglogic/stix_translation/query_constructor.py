@@ -126,7 +126,7 @@ class QueryStringPatternTranslator:
     @staticmethod
     def _lookup_comparison_operator(self, expression_operator):
         if expression_operator not in self.comparator_lookup:
-            raise NotImplementedError("Comparison operator {} unsupported for Dummy connector".format(expression_operator.name))
+            raise NotImplementedError("Comparison operator {} unsupported for LogLogic connector".format(expression_operator.name))
         return self.comparator_lookup[expression_operator]
 
     def _parse_expression(self, expression, qualifier=None) -> str:
@@ -158,7 +158,7 @@ class QueryStringPatternTranslator:
                 value = self._escape_value(expression.value)
 
             comparison_string = self._parse_mapped_fields(self, expression, value, comparator, stix_field, mapped_fields_array)
-            if(len(mapped_fields_array) > 1 and not self._is_reference_value(stix_field)):
+            if len(mapped_fields_array) > 1 and not self._is_reference_value(stix_field):
                 # More than one data source field maps to the STIX attribute, so group comparisons together.
                 grouped_comparison_string = "(" + comparison_string + ")"
                 comparison_string = grouped_comparison_string
@@ -191,7 +191,8 @@ class QueryStringPatternTranslator:
             if isinstance(expression.observation_expression, CombinedObservationExpression):
                 operator = self._lookup_comparison_operator(self, expression.observation_expression.operator)
                 expression_01 = self._parse_expression(expression.observation_expression.expr1)
-                # qualifier only needs to be passed into the parse expression once since it will be the same for both expressions
+                # qualifier only needs to be passed into the parse expression once since it will be the same for both
+                # expressions
                 expression_02 = self._parse_expression(expression.observation_expression.expr2, expression.qualifier)
                 return "{} {} {}".format(expression_01, operator, expression_02)
             else:
@@ -220,12 +221,19 @@ class QueryStringPatternTranslator:
 
 def translate_pattern(pattern: Pattern, data_model_mapping, options):
     # Query result limit and time range can be passed into the QueryStringPatternTranslator if supported by the data source.
-    # result_limit = options['result_limit']
-    # time_range = options['time_range']
+    result_limit = options['result_limit']
+    time_range = options['time_range']
     query = QueryStringPatternTranslator(pattern, data_model_mapping).translated
     # Add space around START STOP qualifiers
     query = re.sub("START", "START ", query)
     query = re.sub("STOP", " STOP ", query)
+
+    # TODO: Build EQL queries here
+    # 1. Need to build the start of the query "use <data model>, <data model>...|" from the dialects mapped in the json files
+    # 2. Time frame needs to be added at the end, otherwise the query will fail when sent to LogLogic
+    # - "sys_eventTime between '2016-02-02' and '2016-02-03'"
+    # - "sys_eventTime in -{number}[s, m, h, d, w, M, q, y]
+    # 3. Add a limit at the very end to limit the number of results "LIMIT result_limit"
 
     # This sample return statement is in an SQL format. This should be changed to the native data source query language.
     # If supported by the query language, a limit on the number of results should be added to the query as defined by options['result_limit'].
