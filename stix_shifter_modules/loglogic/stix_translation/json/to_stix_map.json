@@ -1,115 +1,359 @@
 {
-  "UserName": {
-    "key": "user-account.user_id"
+  "ll_sourceHost": {
+    "key": "basic-https-request.extensions.http-request-ext.request_header.Host"
   },
-  "LogSourceId": {
-    "key": "x__custom_property.log_source_id",
+  "ll_application": {
+    "key": "x_com_loglogic.application",
     "cybox": false
   },
-  "Magnitude": {
-    "key": "x__custom_property.magnitude",
+  "ll_classification": {
+    "key": "x_com_loglogic.classification",
     "cybox": false
   },
-  "SourceIpV4": [
-    {
-      "key": "ipv4-addr.value",
-      "object": "src_ip"
-    },
-    {
-      "key": "network-traffic.src_ref",
-      "object": "nt",
-      "references": "src_ip"
-    }
-  ],
-  "DestinationIpV4": [
-    {
-      "key": "ipv4-addr.value",
-      "object": "dst_ip"
-    },
-    {
-      "key": "network-traffic.dst_ref",
-      "object": "nt",
-      "references": "dst_ip"
-    }
-  ],
-  "SourceIpV6": [
-    {
-      "key": "ipv6-addr.value",
-      "object": "src_ip"
-    },
-    {
-      "key": "network-traffic.src_ref",
-      "object": "nt",
-      "references": "src_ip"
-    }
-  ],
-  "DestinationIpV6": [
-    {
-      "key": "ipv6-addr.value",
-      "object": "dst_ip"
-    },
-    {
-      "key": "network-traffic.dst_ref",
-      "object": "nt",
-      "references": "dst_ip"
-    }
-  ],
-  "EventCount": {
-    "key": "number_observed",
+  "ll_code": {
+    "key": "x_com_loglogic.code",
+    "cybox": false
+  },
+  "ll_deviceTypeID": {
+    "key": "x_com_loglogic.device_type_id",
+    "cybox": false
+  },
+  "ll_direction": {
+    "key": "x_com_loglogic.direction",
+    "cybox": false
+  },
+  "ll_disconnectedDetails": {
+    "key": "x_com_loglogic.disconnected_details",
+    "cybox": false
+  },
+  "ll_duration": {
+    "key": "x_com_loglogic.duration",
+    "cybox": false
+  },
+  "ll_eventAction": {
+    "key": "x_com_loglogic.event_action",
+    "cybox": false
+  },
+  "ll_eventActionID": {
+    "key": "x_com_loglogic.event_action_id",
+    "cybox": false
+  },
+  "ll_eventID": {
+    "key": "x_com_loglogic.event_id",
+    "cybox": false
+  },
+  "ll_eventName": {
+    "key": "x_com_loglogic.event_name",
+    "cybox": false
+  },
+  "ll_eventSource": {
+    "key": "x_com_loglogic.event_source",
+    "cybox": false
+  },
+  "ll_eventStatus": {
+    "key": "x_com_loglogic.event_status",
+    "cybox": false
+  },
+  "ll_eventStatusID": {
+    "key": "x_com_loglogic.event_status_id",
+    "cybox": false
+  },
+  "ll_eventTypeCategory": {
+    "key": "x_com_loglogic.event_type_category",
+    "cybox": false
+  },
+  "ll_group": {
+    "key": "x_com_loglogic.group",
+    "cybox": false
+  },
+  "ll_httpStatusCode": {
+    "key": "x_com_loglogic.http_status_code",
     "cybox": false,
     "transformer": "ToInteger"
   },
-  "StartTime": [
+  "ll_method": {
+    "key": "x_com_loglogic.method",
+    "cybox": false
+  },
+  "ll_objectName": {
+    "key": "x_com_loglogic.object_name",
+    "cybox": false
+  },
+  "ll_objectType": {
+    "key": "x_com_loglogic.object_type",
+    "cybox": false
+  },
+  "ll_orgEventAction": {
+    "key": "x_com_loglogic.org_event_action",
+    "cybox": false
+  },
+  "ll_orgEventStatus": {
+    "key": "x_com_loglogic.org_event_status",
+    "cybox": false
+  },
+  "ll_parentName": {
+    "key": "x_com_loglogic.parent_name",
+    "cybox": false
+  },
+  "ll_peerHost": {
+    "key": "x_com_loglogic.peer_host",
+    "cybox": false
+  },
+  "ll_peerIP": {
+    "key": "x_com_loglogic.peer_ip",
+    "cybox": false,
+    "transformer": "ToIPFromINET"
+  },
+  "ll_permissions": {
+    "key": "x_com_loglogic.permissions",
+    "cybox": false
+  },
+  "ll_priority": {
+    "key": "x_com_loglogic.priority",
+    "cybox": false
+  },
+  "ll_priviligeUsed": {
+    "key": "x_com_loglogic.privilige_used",
+    "cybox": false
+  },
+  "ll_pRuleID": {
+    "key": "x_com_loglogic.p_rule_id",
+    "cybox": false
+  },
+  "ll_reason": {
+    "key": "x_com_loglogic.reason",
+    "cybox": false
+  },
+  "ll_refererBy": {
+    "key": "x_com_loglogic.referer_by",
+    "cybox": false
+  },
+  "ll_riskRating": {
+    "key": "x_com_loglogic.risk_rating",
+    "cybox": false
+  },
+  "ll_rule": {
+    "key": "x_com_loglogic.rule",
+    "cybox": false
+  },
+  "ll_sentPacket": {
+    "key": "x_com_loglogic.sent_packet",
+    "cybox": false
+  },
+  "ll_service": {
+    "key": "x_com_loglogic.service",
+    "cybox": false
+  },
+  "ll_signature": {
+    "key": "x_com_loglogic.signature",
+    "cybox": false
+  },
+  "ll_size": {
+    "key": "x_com_loglogic.size",
+    "cybox": false
+  },
+  "ll_sourceDomain": {
+    "key": "x_com_loglogic.source_domain",
+    "cybox": false,
+    "transformer": "ToDomainName"
+  },
+  "ll_sourceUID": {
+    "key": "x_com_loglogic.source_uid",
+    "cybox": false
+  },
+  "ll_sourceUser": {
+    "key": "x_com_loglogic.source_user",
+    "cybox": false
+  },
+  "ll_targetGID": {
+    "key": "x_com_loglogic.target_gid",
+    "cybox": false
+  },
+  "ll_targetHost": {
+    "key": "x_com_loglogic.target_host",
+    "cybox": false
+  },
+  "ll_targetInterface": {
+    "key": "x_com_loglogic.target_interface",
+    "cybox": false
+  },
+  "ll_targetObjectName": {
+    "key": "x_com_loglogic.target_object_name",
+    "cybox": false
+  },
+  "ll_targetUID": {
+    "key": "x_com_loglogic.target_uid",
+    "cybox": false
+  },
+  "ll_threatRating": {
+    "key": "x_com_loglogic.threat_rating",
+    "cybox": false
+  },
+  "ll_translatedIP": {
+    "key": "x_com_loglogic.translated_ip",
+    "cybox": false,
+    "transformer": "ToIPFromINET"
+  },
+  "ll_translatedPort": {
+    "key": "x_com_loglogic.translated_port":
+    "cybox": false
+  },
+  "ll_type": {
+    "key": "x_com_loglogic.type",
+    "cybox": false
+  },
+  "ll_userAgent": {
+    "key": "x_com_loglogic.user_agent",
+    "cybox": false
+  },
+  "sys_body": {
+    "key": "x_com_loglogic.sys_body",
+    "cybox": false
+  },
+  "sys_collectIP": {
+    "key": "x_com_loglogic.sys-collect_ip",
+    "cybox": false,
+    "transformer": "ToIPFromINET"
+  },
+  "sys_collectorDomain": {
+    "key": "x_com_loglogic.sys_collector_domain",
+    "cybox": false,
+    "transformer": "ToDomainName"
+  },
+  "sys_collectorDomainId": {
+    "key": "x_com_loglogic.sys_collector_domain_id",
+    "cybox": false
+  },
+  "sys_collectTime": {
+    "key": "x_com_loglogic.sys_collect_time",
+    "cybox": false,
+    "transformer": "TimestampToUTC"
+  },
+  "sys_concentratorId": {
+    "key": "x_com_loglogic.sys_concentrator_id",
+    "cybox": false
+  },
+  "sys_device": {
+    "key": "x_com_loglogic.sys_device",
+    "cybox": false
+  },
+  "sys_deviceType": {
+    "key": "x_com_loglogic.sys_device_type",
+    "cybox": false
+  },
+  "sys_domain": {
+    "key": "x_com_loglogic.sys_domain",
+    "cybox": false,
+    "transformer": "ToDomainName"
+  },
+  "sys_eventKey": {
+    "key": "x_com_loglogic.sys_event_key",
+    "cybox": false
+  },
+  "sys_eventTime": {
+    "key": "x_com_loglogic.sys_event_time",
+    "cybox": false,
+    "transformer": "TimestampToUTC"
+  },
+  "sys_filename": {
+    "key": "x_com_loglogic.sys_filename",
+    "cybox": false
+  },
+  "sys_sourceSubType": {
+    "key": "x_com_loglogic.sys_source_sub_type",
+    "cybox": false
+  },
+  "sys_sourceType": {
+    "key": "x_com_loglogic.sys_source_type",
+    "cybox": false
+  },
+  "ll_targetIP": [
     {
-      "key": "first_observed",
-      "transformer": "EpochToTimestamp",
-      "cybox": false
+      "key": "ipv4-addr.value",
+      "object": "dst_ip"
     },
     {
-      "key": "last_observed",
-      "transformer": "EpochToTimestamp",
-      "cybox": false
+      "key": "ipv6-addr.value",
+      "object": "dst_ip"
+    },
+    {
+      "key": "network-traffic.dst_ref",
+      "object": "nt",
+      "references": "dst_ip"
     }
   ],
-  "Url": {
-    "key": "url.value"
+  "ll_sourceIP": [
+    {
+      "key": "ipv4-addr.value",
+      "object": "src_ip"
+    },
+    {
+      "key": "ipv6-addr.value",
+      "object": "src_ip"
+    },
+    {
+      "key": "network-traffic.src_ref",
+      "object": "nt",
+      "references": "src_ip"
+    }
+  ],
+  "ll_sourceMAC": [
+    {
+      "key": "mac-addr.value",
+      "object": "src_mac"
+    },
+    {
+      "key": "network-traffic.src_ref",
+      "object": "nt",
+      "references": "src_mac"
+    }
+  ],
+  "ll_bytesSent": {
+    "key": "network-traffic.src_byte_count",
+    "object": "nt",
+    "transformer": "ToInteger"
   },
-  "FileName": {
-    "key": "file.name"
+  "ll_bytesReceived": {
+    "key": "network-traffic.dst_byte_count",
+    "object": "nt",
+    "transformer": "ToInteger"
   },
-  "Payload": {
-    "key": "artifact.payload_bin"
-  },
-  "DestinationPort": {
+  "ll_targetPort": {
     "key": "network-traffic.dst_port",
     "object": "nt",
     "transformer": "ToInteger"
   },
-  "SourcePort": {
+  "ll_sourcePort": {
     "key": "network-traffic.src_port",
     "object": "nt",
     "transformer": "ToInteger"
   },
-  "NetworkProtocol": {
+  "ll_targetDomain": {
+    "key": "domain-name.value",
+    "transformer": "ToDomainName"
+  },
+  "ll_eventEndTime": {
+    "key": "network-traffic.end",
+    "object": "nt",
+    "transformer": "TimestampToUTC"
+  },
+  "ll_eventStartTime": {
+    "key": "network-traffic.start",
+    "object": "nt",
+    "transformer": "TimestampToUTC"
+  },
+  "ll_protocolName": {
     "key": "network-traffic.protocols",
     "object": "nt",
     "transformer": "ToLowercaseArray"
   },
-  "DomainName": {
-    "key": "domain-name.value"
+  "ll_targetProcessName": {
+    "key": "process.name"
   },
-  "Process": {
-    "Path": [
-      {
-        "object": "proc",
-        "key": "process.command_line"
-      }
-    ],
-    "Pid": [
-      {
-        "object": "proc",
-        "key": "process.id"
-      }
-    ]
+  "ll_url": {
+    "key": "url.value"
+  },
+  "ll_targetUser": {
+    "key": "user-account.user-id"
   }
 }
