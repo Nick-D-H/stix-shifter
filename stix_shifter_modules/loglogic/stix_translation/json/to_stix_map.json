@@ -332,16 +332,28 @@
     "key": "domain-name.value",
     "transformer": "ToDomainName"
   },
-  "ll_eventEndTime": {
+  "ll_eventEndTime": [
+    {
     "key": "network-traffic.end",
     "object": "nt",
     "transformer": "TimestampToUTC"
-  },
-  "ll_eventStartTime": {
+    },
+    {
+    "key": "last_observed",
+    "cybox": false
+    }
+  ],
+  "ll_eventStartTime": [
+    {
     "key": "network-traffic.start",
     "object": "nt",
     "transformer": "TimestampToUTC"
-  },
+    },
+    {
+    "key": "first_observed",
+    "cybox": false
+    }
+  ],
   "ll_protocolName": {
     "key": "network-traffic.protocols",
     "object": "nt",
