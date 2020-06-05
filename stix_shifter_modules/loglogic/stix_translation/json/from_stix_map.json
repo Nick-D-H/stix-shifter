@@ -9,6 +9,14 @@
       "value": ["ll_sourceIP", "ll_targetIP"]
     }
   },
+  "mac": {
+    "value": ["ll_sourceMac"]
+  },
+  "url": {
+    "fields": {
+      "value": ["ll_url"]
+    }
+  },
   "file": {
     "fields": {
       "hashes.SHA-256": ["sys_body"],
@@ -18,6 +26,8 @@
   },
   "network-traffic": {
     "fields": {
+      "src_port": ["ll_sourcePort"],
+      "dst_port": ["ll_targetPort"],
       "start": ["ll_eventStartTime"],
       "protocols[*]": ["ll_protocolName"],
       "src_ref.value": ["ll_sourceIP", "ll_sourceIP"],

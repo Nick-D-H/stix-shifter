@@ -223,14 +223,13 @@ class QueryStringPatternTranslator:
 def _create_eql_query(query):
     eql_query = "USE "
     # Add all the available data models to the query
-    with os.scandir("json") as data_models:
-        for model in data_models:
-            if "from" in model.name:
-                eql_query += "%s, ".format(re.sub("_from.*", "", model.name))
+    with open("stix_shifter_modules/loglogic/stix_translation/json/data_models.txt") as data_models:
+        for model in data_models.readlines():
+            eql_query += "{}, ".format(re.sub("\n", "", model))
     # Remove the last ',' and whitespace
-    re.sub(", \B", " ", eql_query)
+    eql_query = eql_query[:(len(eql_query)-2)]
     # Add the remainder of the query
-    eql_query += "| %s".format(query)
+    eql_query += " | {}".format(query)
 
     return eql_query
 
@@ -239,22 +238,25 @@ def translate_pattern(pattern: Pattern, data_model_mapping, options):
     # Query result limit and time range can be passed into the QueryStringPatternTranslator if supported by the data source.
     result_limit = options['result_limit']
     time_range = options['time_range']
+    start_time = ""
+    end_time = ""
     query = QueryStringPatternTranslator(pattern, data_model_mapping).translated
-    # Add space around START STOP qualifiers
-    query = re.sub("START", "START ", query)
-    query = re.sub("STOP", " STOP ", query)
 
-    # TODO: Build EQL queries here
-    # 1. Need to build the start of the query "use <data model>, <data model>...|" from the dialects mapped in the json files
-    # 2. Time frame needs to be added at the end, otherwise the query will fail when sent to LogLogic
-    # - "sys_eventTime between '2016-02-02' and '2016-02-03'"
-    # - "sys_eventTime in -{number}[s, m, h, d, w, M, q, y]
-    # 3. Add a limit at the very end to limit the number of results "LIMIT result_limit"
+    # If there is a time range in the Stix query
+    if "START" in query:
+        # Find time stamps, after START and END
+        # Put these into "sys_eventTime BETWEEN start AND end"
+        start_time = re.search("(\d{4}-).*(?=\\'STOP)", query)[0]
+        end_time = re.search("(STOPt\\'\d{4}-).*(?=\\')", query)[0]
+        end_time = end_time[6:]
+
+        query = "{}))".format(query[:(len(query) - 66)])
+
     loglogic_eql_query = _create_eql_query(query)
-    loglogic_eql_query += " | sys_eventTime in -%dd | LIMIT %d".format(time_range, result_limit)
 
-    # This sample return statement is in an SQL format. This should be changed to the native data source query language.
-    # If supported by the query language, a limit on the number of results should be added to the query as defined by options['result_limit'].
-    # Translated patterns must be returned as a list of one or more native query strings.
-    # A list is returned because some query languages require the STIX pattern to be split into multiple query strings.
+    if start_time != "" and end_time != "":
+        loglogic_eql_query += " | sys_eventTime BETWEEN '{}' AND '{}' | LIMIT {}".format(start_time, end_time, result_limit)
+    else:
+        loglogic_eql_query += " | sys_eventTime in -{}d | LIMIT {}".format(time_range, result_limit)
+
     return [loglogic_eql_query]
