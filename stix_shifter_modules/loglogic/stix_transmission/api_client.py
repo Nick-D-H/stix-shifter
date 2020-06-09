@@ -1,3 +1,5 @@
+import json
+
 from stix_shifter_utils.stix_transmission.utils.RestApiClient import RestApiClient
 
 
@@ -29,7 +31,16 @@ class APIClient():
     def create_search(self, query_expression):
         # Queries the data source
         # TODO: Create the query in the loglogic instance using the REST API
-        return {"code": 200, "query_id": "uuid_1234567890"}
+        api_endpoint = "/api/v2/query"
+        request_body = '{\
+                            "query": "{}",\
+                            "cached": true\
+                        }'.format(query_expression)
+
+        create_query_response = self.client.call_api(api_endpoint, "post", data=request_body)
+        created_query_id = json.loads(create_query_response.bytes)["queryId"]
+
+        return {"code": create_query_response.code, "query_id": created_query_id}
 
     def get_search_status(self, search_id):
         # Check the current status of the search
