@@ -86,6 +86,8 @@ class APIClient():
         else:
             return {"code": search_results_response_code, "data": json.loads(search_results_response.bytes)}
 
+        return str(search_results)
+
     def delete_search(self, search_id):
         # Delete the search
         # TODO: Delete the query from loglogic
