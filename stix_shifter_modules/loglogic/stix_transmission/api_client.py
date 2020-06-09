@@ -1,5 +1,5 @@
+import base64
 import json
-import re
 
 from stix_shifter_utils.stix_transmission.utils.RestApiClient import RestApiClient
 
@@ -9,8 +9,12 @@ class APIClient():
     def __init__(self, connection, configuration):
         # Uncomment when implementing data source API client.
         auth = configuration.get('auth')
+        # Try to add base64 auth headers
+        auth_header = "{}:{}".format(auth.get('username'), auth.get('password'))
+        auth_header = base64.b64encode(bytes(auth_header, "utf-8"))
         headers = dict()
         headers['X-Auth-Token'] = auth.get('token')
+        headers['Authorization'] = "Basic {}".format(str(auth_header, "utf-8"))
         self.client = RestApiClient(connection.get('host'),
                                     connection.get('port'),
                                     connection.get('cert', None),
@@ -32,10 +36,11 @@ class APIClient():
     def create_search(self, query_expression):
         # Queries the data source
         # TODO: Create the query in the loglogic instance using the REST API
-        api_endpoint = "/api/v2/query"
+        api_endpoint = "api/v2/query"
         request_body = '{{"query": "{}", "cached": true, "timeToLive": 0}}'.format(query_expression)
-        print()
-        create_query_response = self.client.call_api(api_endpoint, "post", data=request_body)
+        content_header = dict()
+        content_header['Content-Type'] = "application/JSON"
+        create_query_response = self.client.call_api(api_endpoint, "post", data=request_body, headers=content_header)
         created_query_id = json.loads(create_query_response.bytes)["queryId"]
 
         return {"code": create_query_response.code, "query_id": created_query_id}
@@ -43,7 +48,7 @@ class APIClient():
     def get_search_status(self, search_id):
         # Check the current status of the search
         # TODO: Check the current status of the query -> Use the "status" request
-        api_endpoint = "/api/v2/query/{}/status".format(search_id)
+        api_endpoint = "api/v2/query/{}/status".format(search_id)
 
         search_status_response = self.client.call_api(api_endpoint, "get")
         query_progress = json.loads(search_status_response.bytes)["progress"]
@@ -56,7 +61,7 @@ class APIClient():
         # Need to store the columns from the details endpoint As they are not included in the results
         # Then need to convert the results to JSON with their column names matched up
         # API endpoint for getting the column names
-        api_endpoint = "/api/v2/query/{}/details".format(search_id)
+        api_endpoint = "api/v2/query/{}/details".format(search_id)
         search_details_response = self.client.call_api(api_endpoint, "get")
 
         if search_details_response.code != 200:
@@ -65,7 +70,7 @@ class APIClient():
         search_columns = json.loads(search_details_response.bytes)["columns"]
 
         # Change API endpoint to retrieve the actual results
-        api_endpoint = "/api/v2/query/{}/results".format(search_id)
+        api_endpoint = "api/v2/query/{}/results".format(search_id)
 
         search_results_response = self.client.call_api(api_endpoint, "get")
         search_results_response_code = search_results_response.code
@@ -87,7 +92,7 @@ class APIClient():
     def delete_search(self, search_id):
         # Delete the search
         # TODO: Delete the query from loglogic
-        api_endpoint = "/api/v2/{}".format(search_id)
+        api_endpoint = "api/v2/{}".format(search_id)
         delete_query_response = self.client.call_api(api_endpoint, "del")
 
         return {"code": delete_query_response.code, "success": True if delete_query_response.code == 200 else False}
