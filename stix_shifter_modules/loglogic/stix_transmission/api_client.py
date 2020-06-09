@@ -89,7 +89,10 @@ class APIClient():
     def delete_search(self, search_id):
         # Delete the search
         # TODO: Delete the query from loglogic
-        return {"code": 200, "success": True}
+        api_endpoint = "/api/v2/{}".format(search_id)
+        delete_query_response = self.client.call_api(api_endpoint, "del")
+
+        return {"code": delete_query_response.code, "success": True if delete_query_response.code == 200 else False}
 
 
 def add_results(schema, results):
