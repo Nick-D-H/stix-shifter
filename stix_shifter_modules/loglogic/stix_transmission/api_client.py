@@ -1,4 +1,5 @@
 import json
+import re
 
 from stix_shifter_utils.stix_transmission.utils.RestApiClient import RestApiClient
 
@@ -34,7 +35,8 @@ class APIClient():
         api_endpoint = "/api/v2/query"
         request_body = '{\
                             "query": "{}",\
-                            "cached": true\
+                            "cached": true,\
+                            "timeToLive": 0\
                         }'.format(query_expression)
 
         create_query_response = self.client.call_api(api_endpoint, "post", data=request_body)
@@ -55,10 +57,62 @@ class APIClient():
     def get_search_results(self, search_id, range_start=None, range_end=None):
         # Return the search results. Results must be in JSON format before being translated into STIX
         # TODO: Get the results from loglogic -> Check the "hasMore" attribute and loop to get all results
-        return {"code": 200, "data": "Results from search"}
+        # Need to store the columns from the details endpoint As they are not included in the results
+        # Then need to convert the results to JSON with their column names matched up
+        # API endpoint for getting the column names
+        api_endpoint = "/api/v2/query/{}/details".format(search_id)
+        search_details_response = self.client.call_api(api_endpoint, "get")
+
+        if search_details_response.code != 200:
+            return {"code": search_details_response.code, "data": json.loads(search_details_response.bytes)}
+
+        search_columns = json.loads(search_details_response.bytes)["columns"]
+
+        # Change API endpoint to retrieve the actual results
+        api_endpoint = "/api/v2/query/{}/results".format(search_id)
+
+        search_results_response = self.client.call_api(api_endpoint, "get")
+        search_results_response_code = search_results_response.code
+        search_results = []
+
+        if search_results_response_code == 200:
+            request_results = json.loads(search_results_response.bytes)
+            # Add available result rows from the request
+            search_results.append(add_results(search_columns, request_results["rows"]))
+
+            # If there are more results to retrieve repeat the process
+            while request_results["hasMore"]:
+                search_results.append(add_results(search_columns, request_results["rows"]))
+        else:
+            return {"code": search_results_response_code, "data": json.loads(search_results_response.bytes)}
 
     def delete_search(self, search_id):
-        # Optional since this may not be supported by the data source API
         # Delete the search
         # TODO: Delete the query from loglogic
         return {"code": 200, "success": True}
+
+
+def add_results(schema, results):
+    # TODO: Don't add any null values & fields into the final results
+    # For each row in rows
+    # Add column name: value
+    # Return in the format [{\"column\": value, \"column2\": value}, {\"column\": value, \"column2\": value},...]
+    return_results = []
+
+    for row in results:
+        single_result = ""
+        for i in range(0, len(schema)):
+            # Check this comparison is correct
+            if row[i] is not None:
+                if row[i] is str:
+                    single_result += "\"{}\": \"{}\", ".format(schema[i], row[i])
+                else:
+                    single_result += "\"{}\": {}, ".format(schema[i], row[i])
+
+        # Trim the last ', '
+        single_result = single_result[:len(single_result)-2]
+        # Format as JSON
+        single_result = "{{}}".format(single_result)
+        return_results.append(single_result)
+
+    return return_results
