@@ -15,7 +15,7 @@ class APIClient():
                                     connection.get('port'),
                                     connection.get('cert', None),
                                     headers,
-                                    cert_verify=connection.get('cert_verify', 'True')
+                                    cert_verify=False  # connection.get('cert_verify', 'True')
                                     )
 
         # Placeholder client to allow dummy transmission calls.
@@ -33,12 +33,8 @@ class APIClient():
         # Queries the data source
         # TODO: Create the query in the loglogic instance using the REST API
         api_endpoint = "/api/v2/query"
-        request_body = '{\
-                            "query": "{}",\
-                            "cached": true,\
-                            "timeToLive": 0\
-                        }'.format(query_expression)
-
+        request_body = '{{"query": "{}", "cached": true, "timeToLive": 0}}'.format(query_expression)
+        print()
         create_query_response = self.client.call_api(api_endpoint, "post", data=request_body)
         created_query_id = json.loads(create_query_response.bytes)["queryId"]
 
@@ -117,7 +113,7 @@ def add_results(schema, results):
         # Trim the last ', '
         single_result = single_result[:len(single_result)-2]
         # Format as JSON
-        single_result = "{{}}".format(single_result)
+        single_result = "{{{0}}}".format(single_result)
         return_results.append(single_result)
 
     return return_results
