@@ -52,7 +52,7 @@ class APIClient():
         search_status_response = self.client.call_api(api_endpoint, "get")
         query_progress = json.loads(search_status_response.bytes)["progress"]
 
-        return {"code": search_status_response.code, "status": "COMPLETED" if query_progress == 100 else "IN PROGRESS"}
+        return {"code": search_status_response.code, "status": "COMPLETED" if query_progress == 100 else "EXECUTE"}
 
     def get_search_results(self, search_id, range_start=None, range_end=None):
         # Return the search results. Results must be in JSON format before being translated into STIX
