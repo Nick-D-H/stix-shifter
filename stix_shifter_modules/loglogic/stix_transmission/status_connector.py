@@ -44,6 +44,7 @@ class StatusConnector(BaseStatusConnector):
             if response_code == 200:
                 return_obj['success'] = True
                 return_obj['status'] = self.__getStatus(response_dict["status"])
+                return_obj['progress'] = response_dict["progress"]
             else:
                 return_obj['success'] = False
                 ErrorResponder.fill_error(return_obj, response_dict, ['message'])
