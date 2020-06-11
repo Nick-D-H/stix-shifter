@@ -12,6 +12,8 @@ error_mapping = {
     403: ErrorCode.TRANSMISSION_UNKNOWN,
     # Component not found
     404: ErrorCode.TRANSLATION_MODULE_DEFAULT_ERROR.value,
+    # Method not allowed
+    405: ErrorCode.TRANSLATION_NOTIMPLEMENTED_MODE,
     # Not acceptable
     406: ErrorCode.TRANSLATION_NOTSUPPORTED,
     # Unspecified internal error
