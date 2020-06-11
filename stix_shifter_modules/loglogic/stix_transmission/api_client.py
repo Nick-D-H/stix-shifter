@@ -10,7 +10,7 @@ class APIClient():
     def __init__(self, connection, configuration):
         # Uncomment when implementing data source API client.
         auth = configuration.get('auth')
-        # Try to add base64 auth headers
+        # Add base64 auth headers
         auth_header = "{}:{}".format(auth.get('username'), auth.get('password'))
         auth_header = base64.b64encode(bytes(auth_header, "utf-8"))
         headers = dict()
@@ -23,20 +23,14 @@ class APIClient():
                                     cert_verify=False  # connection.get('cert_verify', 'True') TODO: Reset this when finished testing
                                     )
 
-        # Placeholder client to allow dummy transmission calls.
-        # Remove when implementing data source API client.
-        # self.client = "data source API client"
-
     def ping_data_source(self):
         # Pings the data source
-        # TODO: Ping the loglogic instance
         ping_response = self.client.call_api("", "get")
 
         return {"code": ping_response.code, "success": True if ping_response.code == 200 else False}
 
     def create_search(self, query_expression):
         # Queries the data source
-        # TODO: Create the query in the loglogic instance using the REST API
         api_endpoint = "api/v2/query"
         request_body = '{{"query": "{}", "cached": true, "timeToLive": 0}}'.format(query_expression)
         content_header = dict()
@@ -48,7 +42,6 @@ class APIClient():
 
     def get_search_status(self, search_id):
         # Check the current status of the search
-        # TODO: Check the current status of the query -> Use the "status" request
         api_endpoint = "api/v2/query/{}/status".format(search_id)
 
         search_status_response = self.client.call_api(api_endpoint, "get")
@@ -58,7 +51,6 @@ class APIClient():
 
     def get_search_results(self, search_id, range_start=None, range_end=None):
         # Return the search results. Results must be in JSON format before being translated into STIX
-        # TODO: Get the results from loglogic -> Check the "hasMore" attribute and loop to get all results
         # Need to store the columns from the details endpoint As they are not included in the results
         # Then need to convert the results to JSON with their column names matched up
         # API endpoint for getting the column names
@@ -71,7 +63,6 @@ class APIClient():
         search_columns = json.loads(search_details_response.bytes)["columns"]
 
         # Change API endpoint to retrieve the actual results
-        # TODO: Add ?offset=value to the end of the url for fetching repeat results
         offset = 0
         api_endpoint = "api/v2/query/{}/results?offset={}".format(search_id, offset)
 
@@ -100,7 +91,6 @@ class APIClient():
 
     def delete_search(self, search_id):
         # Delete the search
-        # TODO: Delete the query from loglogic
         api_endpoint = "api/v2/query/{}".format(search_id)
         delete_query_response = self.client.call_api(api_endpoint, "delete")
 
@@ -118,12 +108,13 @@ def _add_results(schema, results):
         for i in range(0, len(schema)):
             # Get the column name
             column_name = schema[i]["name"]
+            # Strip null results
             if not isinstance(row[i], type(None)):
                 if isinstance(row[i], str):
-                    # Need to fetch just the column name and not the data type
-                    single_result[column_name] = str(row[i])
-                else:
-                    single_result[column_name] = row[i]
+                    # Enforce string typing
+                    row[i] = str(row[i])
+
+                single_result[column_name] = row[i]
 
         return_results.append(single_result)
 
