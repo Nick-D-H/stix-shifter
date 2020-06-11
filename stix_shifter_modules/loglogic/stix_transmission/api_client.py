@@ -1,5 +1,6 @@
 import base64
 import json
+import re
 
 from stix_shifter_utils.stix_transmission.utils.RestApiClient import RestApiClient
 
@@ -70,7 +71,9 @@ class APIClient():
         search_columns = json.loads(search_details_response.bytes)["columns"]
 
         # Change API endpoint to retrieve the actual results
-        api_endpoint = "api/v2/query/{}/results".format(search_id)
+        # TODO: Add ?offset=value to the end of the url for fetching repeat results
+        offset = 0
+        api_endpoint = "api/v2/query/{}/results?offset={}".format(search_id, offset)
 
         search_results_response = self.client.call_api(api_endpoint, "get")
         search_results_response_code = search_results_response.code
@@ -79,46 +82,49 @@ class APIClient():
         if search_results_response_code == 200:
             request_results = json.loads(search_results_response.bytes)
             # Add available result rows from the request
-            search_results.append(add_results(search_columns, request_results["rows"]))
-
+            search_results += _add_results(search_columns, request_results["rows"])
             # If there are more results to retrieve repeat the process
             while request_results["hasMore"]:
-                search_results.append(add_results(search_columns, request_results["rows"]))
+                # Add 100 to the offset then make another call
+                offset += 100
+                api_endpoint = "api/v2/query/{}/results?offset={}".format(search_id, offset)
+                search_results_response = self.client.call_api(api_endpoint, "get")
+                request_results = json.loads(search_results_response.bytes)
+                search_results += _add_results(search_columns, request_results["rows"])
         else:
-            return {"code": search_results_response_code, "data": json.loads(search_results_response.bytes)}
+            return {"code": search_results_response_code, "message": json.loads(search_results_response.bytes)}
 
-        return str(search_results)
+        # TODO: Does this need to be json.loads for the data section?
+        final_results = str(search_results).replace("'", '"')
+        return {"code": search_results_response_code, "data": final_results}
 
     def delete_search(self, search_id):
         # Delete the search
         # TODO: Delete the query from loglogic
-        api_endpoint = "api/v2/{}".format(search_id)
-        delete_query_response = self.client.call_api(api_endpoint, "del")
+        api_endpoint = "api/v2/query/{}".format(search_id)
+        delete_query_response = self.client.call_api(api_endpoint, "delete")
 
         return {"code": delete_query_response.code, "success": True if delete_query_response.code == 200 else False}
 
 
-def add_results(schema, results):
-    # TODO: Don't add any null values & fields into the final results
+def _add_results(schema, results):
     # For each row in rows
     # Add column name: value
     # Return in the format [{\"column\": value, \"column2\": value}, {\"column\": value, \"column2\": value},...]
     return_results = []
 
     for row in results:
-        single_result = ""
+        single_result = {}
         for i in range(0, len(schema)):
-            # Check this comparison is correct
-            if row[i] is not None:
-                if row[i] is str:
-                    single_result += "\"{}\": \"{}\", ".format(schema[i], row[i])
+            # Get the column name
+            column_name = schema[i]["name"]
+            if not isinstance(row[i], type(None)):
+                if isinstance(row[i], str):
+                    # Need to fetch just the column name and not the data type
+                    single_result[column_name] = str(row[i])
                 else:
-                    single_result += "\"{}\": {}, ".format(schema[i], row[i])
+                    single_result[column_name] = row[i]
 
-        # Trim the last ', '
-        single_result = single_result[:len(single_result)-2]
-        # Format as JSON
-        single_result = "{{{0}}}".format(single_result)
         return_results.append(single_result)
 
     return return_results
