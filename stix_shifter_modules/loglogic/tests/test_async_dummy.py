@@ -1,6 +1,7 @@
+import unittest
+
 from stix_shifter_modules.async_dummy.entry_point import EntryPoint
 from stix_shifter_utils.modules.base.stix_transmission.base_status_connector import Status
-import unittest
 
 
 class TestAsyncDummyConnection(unittest.TestCase, object):

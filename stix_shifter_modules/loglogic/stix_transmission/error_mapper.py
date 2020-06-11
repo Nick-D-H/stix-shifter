@@ -22,7 +22,6 @@ error_mapping = {
 
 
 class ErrorMapper():
-
     DEFAULT_ERROR = ErrorCode.TRANSMISSION_MODULE_DEFAULT_ERROR
 
     @staticmethod

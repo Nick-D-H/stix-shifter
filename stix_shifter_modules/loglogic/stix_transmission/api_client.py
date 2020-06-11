@@ -1,6 +1,5 @@
 import base64
 import json
-import re
 
 from stix_shifter_utils.stix_transmission.utils.RestApiClient import RestApiClient
 
@@ -20,7 +19,8 @@ class APIClient():
                                     connection.get('port'),
                                     connection.get('cert', None),
                                     headers,
-                                    cert_verify=False  # connection.get('cert_verify', 'True') TODO: Reset this when finished testing
+                                    cert_verify=False
+                                    # connection.get('cert_verify', 'True') TODO: Reset this when finished testing
                                     )
 
     def ping_data_source(self):
@@ -47,7 +47,8 @@ class APIClient():
         search_status_response = self.client.call_api(api_endpoint, "get")
         query_progress = json.loads(search_status_response.bytes)["progress"]
 
-        return {"code": search_status_response.code, "status": "COMPLETED" if query_progress == 100 else "EXECUTE", "progress": query_progress}
+        return {"code": search_status_response.code, "status": "COMPLETED" if query_progress == 100 else "EXECUTE",
+                "progress": query_progress}
 
     def get_search_results(self, search_id, range_start=None, range_end=None):
         # Return the search results. Results must be in JSON format before being translated into STIX
@@ -62,8 +63,9 @@ class APIClient():
 
         search_columns = json.loads(search_details_response.bytes)["columns"]
 
-        # Change API endpoint to retrieve the actual results
+        # Results offset
         offset = 0
+        # Change API endpoint to retrieve the actual results
         api_endpoint = "api/v2/query/{}/results?offset={}".format(search_id, offset)
 
         search_results_response = self.client.call_api(api_endpoint, "get")

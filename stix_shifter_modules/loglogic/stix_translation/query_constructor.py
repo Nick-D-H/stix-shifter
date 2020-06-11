@@ -1,11 +1,11 @@
-from stix_shifter_utils.stix_translation.src.patterns.pattern_objects import ObservationExpression, ComparisonExpression, \
-    ComparisonExpressionOperators, ComparisonComparators, Pattern, \
-    CombinedComparisonExpression, CombinedObservationExpression, ObservationOperators
-from stix_shifter_utils.stix_translation.src.utils.transformers import TimestampToMilliseconds
-from stix_shifter_utils.stix_translation.src.json_to_stix import observable
 import logging
 import re
-import os
+
+from stix_shifter_utils.stix_translation.src.json_to_stix import observable
+from stix_shifter_utils.stix_translation.src.patterns.pattern_objects import CombinedComparisonExpression, \
+    CombinedObservationExpression, ComparisonComparators, ComparisonExpression, ComparisonExpressionOperators, \
+    ObservationExpression, ObservationOperators, Pattern
+from stix_shifter_utils.stix_translation.src.utils.transformers import TimestampToMilliseconds
 
 # Source and destination reference mapping for ip and mac addresses.
 # Change the keys to match the data source fields. The value array indicates the possible data type that can come into from field.
@@ -89,7 +89,7 @@ class QueryStringPatternTranslator:
                 return key
         return None
 
-    #TODO remove self reference from static methods
+    # TODO remove self reference from static methods
     @staticmethod
     def _parse_reference(self, stix_field, value_type, mapped_field, value, comparator):
         if value_type not in REFERENCE_DATA_TYPES["{}".format(mapped_field)]:
@@ -113,7 +113,8 @@ class QueryStringPatternTranslator:
                     continue
                 comparison_string += parsed_reference
             else:
-                comparison_string += "{mapped_field} {comparator} {value}".format(mapped_field=mapped_field, comparator=comparator, value=value)
+                comparison_string += "{mapped_field} {comparator} {value}".format(mapped_field=mapped_field,
+                                                                                  comparator=comparator, value=value)
 
             if (mapped_fields_count > 1):
                 comparison_string += " OR "
@@ -127,7 +128,8 @@ class QueryStringPatternTranslator:
     @staticmethod
     def _lookup_comparison_operator(self, expression_operator):
         if expression_operator not in self.comparator_lookup:
-            raise NotImplementedError("Comparison operator {} unsupported for LogLogic connector".format(expression_operator.name))
+            raise NotImplementedError(
+                "Comparison operator {} unsupported for LogLogic connector".format(expression_operator.name))
         return self.comparator_lookup[expression_operator]
 
     def _parse_expression(self, expression, qualifier=None) -> str:
@@ -158,7 +160,8 @@ class QueryStringPatternTranslator:
             else:
                 value = self._escape_value(expression.value)
 
-            comparison_string = self._parse_mapped_fields(self, expression, value, comparator, stix_field, mapped_fields_array)
+            comparison_string = self._parse_mapped_fields(self, expression, value, comparator, stix_field,
+                                                          mapped_fields_array)
             if len(mapped_fields_array) > 1 and not self._is_reference_value(stix_field):
                 # More than one data source field maps to the STIX attribute, so group comparisons together.
                 grouped_comparison_string = "(" + comparison_string + ")"
@@ -197,7 +200,8 @@ class QueryStringPatternTranslator:
                 expression_02 = self._parse_expression(expression.observation_expression.expr2, expression.qualifier)
                 return "{} {} {}".format(expression_01, operator, expression_02)
             else:
-                return self._parse_expression(expression.observation_expression.comparison_expression, expression.qualifier)
+                return self._parse_expression(expression.observation_expression.comparison_expression,
+                                              expression.qualifier)
         elif isinstance(expression, CombinedObservationExpression):
             operator = self._lookup_comparison_operator(self, expression.operator)
             expression_01 = self._parse_expression(expression.expr1)
@@ -227,7 +231,7 @@ def _create_eql_query(query):
         for model in data_models.readlines():
             eql_query += "{}, ".format(re.sub("\n", "", model))
     # Remove the last ',' and whitespace
-    eql_query = eql_query[:(len(eql_query)-2)]
+    eql_query = eql_query[:(len(eql_query) - 2)]
     # Add the remainder of the query
     eql_query += " | {}".format(query)
 
@@ -255,7 +259,8 @@ def translate_pattern(pattern: Pattern, data_model_mapping, options):
     loglogic_eql_query = _create_eql_query(query)
 
     if start_time != "" and end_time != "":
-        loglogic_eql_query += " | sys_eventTime BETWEEN '{}' AND '{}' | LIMIT {}".format(start_time, end_time, result_limit)
+        loglogic_eql_query += " | sys_eventTime BETWEEN '{}' AND '{}' | LIMIT {}".format(start_time, end_time,
+                                                                                         result_limit)
     else:
         loglogic_eql_query += " | sys_eventTime in -{}d | LIMIT {}".format(time_range, result_limit)
 

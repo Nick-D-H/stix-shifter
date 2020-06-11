@@ -1,6 +1,7 @@
 from stix_shifter_utils.modules.base.stix_transmission.base_query_connector import BaseQueryConnector
 from stix_shifter_utils.utils.error_response import ErrorResponder
 
+
 class QueryConnector(BaseQueryConnector):
     def __init__(self, api_client):
         self.api_client = api_client

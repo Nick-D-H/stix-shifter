@@ -1,7 +1,8 @@
-from stix_shifter_utils.modules.base.stix_transmission.base_status_connector import BaseStatusConnector
-from stix_shifter_utils.modules.base.stix_transmission.base_status_connector import Status
 from enum import Enum
+
+from stix_shifter_utils.modules.base.stix_transmission.base_status_connector import BaseStatusConnector, Status
 from stix_shifter_utils.utils.error_response import ErrorResponder
+
 
 class DatasourceStatus(Enum):
     # WAIT, EXECUTE, SORTING, COMPLETED, CANCELED, ERROR
