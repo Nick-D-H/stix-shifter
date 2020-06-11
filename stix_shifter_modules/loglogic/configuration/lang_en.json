@@ -26,11 +26,11 @@
         "auth": {
             "username": {
                 "label": "Username",
-                "description": "Username with access to the search API"
+                "description": "Username with 'Admin' or 'Search Archived Data' permissions"
             },
             "password": {
                 "label": "Password",
-                "description": "Password of the user with access to the search API"
+                "description": "Password of the user with 'Admin' or 'Search Archived Data' permissions"
             }
         }
     }
