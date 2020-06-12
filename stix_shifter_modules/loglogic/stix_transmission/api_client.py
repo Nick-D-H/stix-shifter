@@ -65,8 +65,18 @@ class APIClient():
 
         # Results offset
         offset = 0
+        size = -1
+
+        if range_end is not None:
+            range_end = int(range_end)
+            size = range_end
+            if range_start is not None:
+                range_start = int(range_start)
+                size = range_end - range_start
+                offset = range_start-1
+
         # Change API endpoint to retrieve the actual results
-        api_endpoint = "api/v2/query/{}/results?offset={}".format(search_id, offset)
+        api_endpoint = "api/v2/query/{}/results?offset={}&size={}".format(search_id, offset, size)
 
         search_results_response = self.client.call_api(api_endpoint, "get")
         search_results_response_code = search_results_response.code
@@ -76,14 +86,16 @@ class APIClient():
             request_results = json.loads(search_results_response.bytes)
             # Add available result rows from the request
             search_results += _add_results(search_columns, request_results["rows"])
+            offset += len(request_results["rows"])
             # If there are more results to retrieve repeat the process
-            while request_results["hasMore"]:
-                # Add 100 to the offset then make another call
-                offset += 100
-                api_endpoint = "api/v2/query/{}/results?offset={}".format(search_id, offset)
+            # Only relevant for huge result sets > 1000
+            while request_results["hasMore"] and offset < size:
+                # Add the number of previous results to the offset then make another call
+                api_endpoint = "api/v2/query/{}/results?offset={}&size={}".format(search_id, offset, size - offset)
                 search_results_response = self.client.call_api(api_endpoint, "get")
                 request_results = json.loads(search_results_response.bytes)
                 search_results += _add_results(search_columns, request_results["rows"])
+                offset += len(request_results["rows"])
         else:
             return {"code": search_results_response_code, "message": json.loads(search_results_response.bytes)}
 
