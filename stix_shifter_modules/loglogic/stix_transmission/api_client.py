@@ -100,7 +100,8 @@ class APIClient():
             return {"code": search_results_response_code, "message": json.loads(search_results_response.bytes)}
 
         # TODO: Does this need to be json.loads for the data section?
-        final_results = str(search_results).replace("'", '"')
+        # Reformat so that it meets the JSON standard for the use of " & '
+        final_results = _json_format(search_results)
         return {"code": search_results_response_code, "data": final_results}
 
     def delete_search(self, search_id):
@@ -127,9 +128,22 @@ def _add_results(schema, results):
                 if isinstance(row[i], str):
                     # Enforce string typing
                     row[i] = str(row[i])
+                    # To ensure JSON conformity later on, replace all " with ' in the sys_body
+                    if column_name == "sys_body":
+                        row[i] = row[i].replace('"', "'")
 
                 single_result[column_name] = row[i]
 
         return_results.append(single_result)
 
     return return_results
+
+
+def _json_format(search_results):
+    return str(search_results).replace("{'", '{"') \
+                              .replace("':", '":') \
+                              .replace(": '", ': "') \
+                              .replace("',", '",') \
+                              .replace(", '", ', "') \
+                              .replace("'},", '"},') \
+                              .replace("'}]", '"}]')
