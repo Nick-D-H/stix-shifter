@@ -22,8 +22,8 @@
     "key": "x_com_loglogic.direction",
     "cybox": false
   },
-  "ll_disconnectedDetails": {
-    "key": "x_com_loglogic.disconnected_details",
+  "ll_disconnectDetails": {
+    "key": "x_com_loglogic.disconnect_details",
     "cybox": false
   },
   "ll_duration": {
@@ -101,8 +101,7 @@
   },
   "ll_peerIP": {
     "key": "x_com_loglogic.peer_ip",
-    "cybox": false,
-    "transformer": "ToIPFromINET"
+    "cybox": false
   },
   "ll_permissions": {
     "key": "x_com_loglogic.permissions",
@@ -191,11 +190,10 @@
   },
   "ll_translatedIP": {
     "key": "x_com_loglogic.translated_ip",
-    "cybox": false,
-    "transformer": "ToIPFromINET"
+    "cybox": false
   },
   "ll_translatedPort": {
-    "key": "x_com_loglogic.translated_port":
+    "key": "x_com_loglogic.translated_port",
     "cybox": false
   },
   "ll_type": {
@@ -212,8 +210,7 @@
   },
   "sys_collectIP": {
     "key": "x_com_loglogic.sys-collect_ip",
-    "cybox": false,
-    "transformer": "ToIPFromINET"
+    "cybox": false
   },
   "sys_collectorDomain": {
     "key": "x_com_loglogic.sys_collector_domain",
@@ -227,7 +224,7 @@
   "sys_collectTime": {
     "key": "x_com_loglogic.sys_collect_time",
     "cybox": false,
-    "transformer": "TimestampToUTC"
+    "transformer": "EpochToTimestamp"
   },
   "sys_concentratorId": {
     "key": "x_com_loglogic.sys_concentrator_id",
@@ -253,7 +250,7 @@
   "sys_eventTime": {
     "key": "x_com_loglogic.sys_event_time",
     "cybox": false,
-    "transformer": "TimestampToUTC"
+    "transformer": "EpochToTimestamp"
   },
   "sys_filename": {
     "key": "x_com_loglogic.sys_filename",
@@ -336,21 +333,23 @@
     {
     "key": "network-traffic.end",
     "object": "nt",
-    "transformer": "TimestampToUTC"
+    "transformer": "EpochToTimestamp"
     },
     {
     "key": "last_observed",
-    "cybox": false
+    "cybox": false,
+    "transformer": "EpochToTimestamp"
     }
   ],
   "ll_eventStartTime": [
     {
     "key": "network-traffic.start",
     "object": "nt",
-    "transformer": "TimestampToUTC"
+    "transformer": "EpochToTimestamp"
     },
     {
     "key": "first_observed",
+    "transformer": "EpochToTimestamp",
     "cybox": false
     }
   ],
