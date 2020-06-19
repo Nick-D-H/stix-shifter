@@ -209,7 +209,7 @@
     "cybox": false
   },
   "sys_collectIP": {
-    "key": "x_com_loglogic.sys-collect_ip",
+    "key": "x_com_loglogic.sys_collect_ip",
     "cybox": false
   },
   "sys_collectorDomain": {
@@ -226,7 +226,7 @@
     "cybox": false,
     "transformer": "EpochToTimestamp"
   },
-  "sys_concentratorId": {
+  "sys_concentratorID": {
     "key": "x_com_loglogic.sys_concentrator_id",
     "cybox": false
   },
