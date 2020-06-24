@@ -36,7 +36,7 @@ class APIClient():
         content_header = dict()
         content_header['Content-Type'] = "application/JSON"
         create_query_response = self.client.call_api(api_endpoint, "post", data=request_body, headers=content_header)
-        created_query_id = json.loads(create_query_response.bytes)["queryId"]
+        created_query_id = json.loads(create_query_response.bytes)["queryId"] if create_query_response.code == 200 else ""
 
         return {"code": create_query_response.code, "query_id": created_query_id}
 
@@ -45,7 +45,7 @@ class APIClient():
         api_endpoint = "api/v2/query/{}/status".format(search_id)
 
         search_status_response = self.client.call_api(api_endpoint, "get")
-        query_progress = json.loads(search_status_response.bytes)["progress"]
+        query_progress = json.loads(search_status_response.bytes)["progress"] if search_status_response.code == 200 else 0
 
         return {"code": search_status_response.code, "status": "COMPLETED" if query_progress == 100 else "EXECUTE",
                 "progress": query_progress}
