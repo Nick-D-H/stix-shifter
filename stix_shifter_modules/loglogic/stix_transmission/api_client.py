@@ -76,33 +76,32 @@ class APIClient():
                 offset = range_start-1
 
         # Change API endpoint to retrieve the actual results
-        api_endpoint = "api/v2/query/{}/results?offset={}&size={}".format(search_id, offset, size)
-
-        search_results_response = self.client.call_api(api_endpoint, "get")
+        search_results_response = self._get_api_results(offset, search_id, size)
         search_results_response_code = search_results_response.code
         search_results = []
 
         if search_results_response_code == 200:
             request_results = json.loads(search_results_response.bytes)
             # Add available result rows from the request
-            search_results += _add_results(search_columns, request_results["rows"])
+            search_results += request_results["rows"]
             offset += len(request_results["rows"])
             # If there are more results to retrieve repeat the process
             # Only relevant for huge result sets > 1000
             while request_results["hasMore"] and offset < size:
                 # Add the number of previous results to the offset then make another call
-                api_endpoint = "api/v2/query/{}/results?offset={}&size={}".format(search_id, offset, size - offset)
-                search_results_response = self.client.call_api(api_endpoint, "get")
+                search_results_response = self._get_api_results(offset, search_id, size)
                 request_results = json.loads(search_results_response.bytes)
-                search_results += _add_results(search_columns, request_results["rows"])
+                search_results += request_results["rows"]
                 offset += len(request_results["rows"])
         else:
             return {"code": search_results_response_code, "message": json.loads(search_results_response.bytes)}
 
-        # TODO: Does this need to be json.loads for the data section?
-        # Reformat so that it meets the JSON standard for the use of " & '
-        final_results = _json_format(search_results)
-        return {"code": search_results_response_code, "data": final_results}
+        return {"code": search_results_response_code, "data": search_results, "schema": search_columns}
+
+    def _get_api_results(self, offset, search_id, size):
+        api_endpoint = "api/v2/query/{}/results?offset={}&size={}".format(search_id, offset, size - offset)
+        search_results_response = self.client.call_api(api_endpoint, "get")
+        return search_results_response
 
     def delete_search(self, search_id):
         # Delete the search
@@ -110,40 +109,3 @@ class APIClient():
         delete_query_response = self.client.call_api(api_endpoint, "delete")
 
         return {"code": delete_query_response.code, "success": True if delete_query_response.code == 200 else False}
-
-
-def _add_results(schema, results):
-    # For each row in rows
-    # Add column name: value
-    # Return in the format [{\"column\": value, \"column2\": value}, {\"column\": value, \"column2\": value},...]
-    return_results = []
-
-    for row in results:
-        single_result = {}
-        for i in range(0, len(schema)):
-            # Get the column name
-            column_name = schema[i]["name"]
-            # Strip null results
-            if not isinstance(row[i], type(None)):
-                if isinstance(row[i], str):
-                    # Enforce string typing
-                    row[i] = str(row[i])
-                    # To ensure JSON conformity later on, replace all " with ' in the sys_body
-                    if column_name == "sys_body":
-                        row[i] = row[i].replace('"', "'")
-
-                single_result[column_name] = row[i]
-
-        return_results.append(single_result)
-
-    return return_results
-
-
-def _json_format(search_results):
-    return str(search_results).replace("{'", '{"') \
-                              .replace("':", '":') \
-                              .replace(": '", ': "') \
-                              .replace("',", '",') \
-                              .replace(", '", ', "') \
-                              .replace("'},", '"},') \
-                              .replace("'}]", '"}]')
