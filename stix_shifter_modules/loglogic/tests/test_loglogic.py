@@ -4,16 +4,16 @@ from stix_shifter_modules.loglogic.entry_point import EntryPoint
 from stix_shifter_utils.modules.base.stix_transmission.base_status_connector import Status
 
 CONNECTION = {
-            "host": "host",
-            "port": "port",
-            "path": "/"
-        }
+    "host": "host",
+    "port": "port",
+    "path": "/"
+}
 CONFIGURATION = {
-            "auth": {
-                "username": "placeholder username",
-                "password": "placeholder password"
-            }
-        }
+    "auth": {
+        "username": "placeholder username",
+        "password": "placeholder password"
+    }
+}
 QUERY_ID = "placeholder query ID"
 ENTRY_POINT = EntryPoint(CONNECTION, CONFIGURATION)
 

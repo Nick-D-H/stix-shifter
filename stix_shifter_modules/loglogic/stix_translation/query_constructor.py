@@ -227,7 +227,7 @@ class QueryStringPatternTranslator:
 def _create_eql_query(query):
     eql_query = "USE "
     # Add all the available data models to the query
-    with open("stix_shifter_modules/loglogic/stix_translation/json/data_models.txt") as data_models:
+    with open("stix_shifter_modules/loglogic/stix_translation/data_models/data_models.txt") as data_models:
         for model in data_models.readlines():
             eql_query += "{}, ".format(re.sub("\n", "", model))
     # Remove the last ',' and whitespace
